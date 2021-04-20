@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.pet.user.dao.IUserRepository">
+	<resultMap id="userMap" type="com.my.pet.user.vo.UserVO" >
+		<result property="userId" column="c_user"/>
+		<result property="userPw" column="p_pass"/>
+		<result property="userName" column="p_name"/>
+		<result property="userNick" column="p_nick"/>
+		<result property="userPhone" column="p_phone"/>
+		<result property="userEmail" column="p_email"/>
+		<result property="userAddnum" column="p_addnum"/>
+		<result property="userAddress" column="p_address"/>
+		<result property="userDetails" column="p_adddetails"/>
+	</resultMap>
+	
+	<select id="getInfo" parameterType="String" resultMap="userMap">
+		select * from usertable where p_user=#{userId}
+	</select>
+	
+	<insert id="insert" parameterType="com.my.pet.user.vo.UserVO">
+		insert into usertable values(#{userId},#{userPw},
+		#{userName},#{userNick},#{userPhone},
+		#{userEmail},#{userAddnum},#{userAddress},#{userDetails},0)
+	</insert>
+	
+	<select id="getPassSearch" parameterType="String"
+		 resultType="com.my.pet.user.vo.UserVO">
+		select 	
+			p_user as userId,
+			p_name as userName,
+			p_phone as userPhone,
+			p_pass as userPw
+			from usertable where p_user=#{userId}
+	</select>
+	
+	<!-- <select id="getLike_check" parameterType="String" resultType="String">
+		select p_user from where p_user like #{userId}
+	</select> -->
+	
+	<update id="getUserUpdate" parameterType="com.my.pet.user.vo.UserVO">
+		update usertable set 
+				p_name=#{userName},
+				p_nick=#{userNick},
+				p_phone=#{userPhone} 
+				where p_user=#{userId}
+	</update> 
+	
+</mapper>

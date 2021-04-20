@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.my.pet.board.dao.IBoardRepository">
+	 <resultMap id="dogboard" type="com.my.pet.board.vo.DogVo" >
+		<result property="d_num" column="d_num"/>
+		<result property="p_user" column="p_user"/>
+		<result property="d_title" column="d_title"/>
+		<result property="d_name" column="d_name"/>
+		<result property="d_content" column="d_content"/>
+		<result property="d_date" column="d_date"/>
+		<result property="d_pic" column="d_pic"/>
+		<result property="d_picsize" column="d_picsize"/>
+	</resultMap>  
+	
+	<resultMap id="catboard" type="com.my.pet.board.vo.CatVo" >
+		<result property="c_num" column="c_num"/>
+		<result property="p_user" column="p_user"/>
+		<result property="c_title" column="c_title"/>
+		<result property="c_name" column="c_name"/>
+		<result property="c_content" column="c_content"/>
+		<result property="c_date" column="c_date"/>
+		<result property="c_pic" column="c_pic"/>
+		<result property="c_picsize" column="c_picsize"/>
+	</resultMap>  
+	
+	<resultMap id="traingboard" type="com.my.pet.board.vo.TrainingVo" >
+		<result property="t_num" column="t_num"/>
+		<result property="p_user" column="p_user"/>
+		<result property="p_nick" column="p_nick"/>
+		<result property="t_title" column="t_title"/>
+		<result property="t_content" column="t_content"/>
+		<result property="t_path" column="t_path"/>
+		<result property="t_date" column="t_date"/>
+	</resultMap>
+	
+	<resultMap id="comboard" type="com.my.pet.board.vo.ComVo">
+		<result property="com_num" column="com_num"/>
+		<result property="p_user" column="p_user"/>
+		<result property="p_nick" column="p_nick"/>
+		<result property="com_title" column="com_title"/>
+		<result property="com_content" column="com_content"/>
+		<result property="p_phone" column="p_phone"/>
+	</resultMap>
+	<!-- <select id="getInfo" parameterType="String"
+		resultMap="catboard">
+		select * from cattable where c_name=#{cname}
+	</select> 
+	
+	
+	<select id="getSearch" resultMap="catboard">
+		select * from cat where c_name like #{select}
+	</select>
+	
+	<insert id="insert" parameterType="com.my.pet.board.vo.CatVo">
+		insert into cat values(#{cname},#{cpic},#{csize})
+	</insert>	
+	
+	<select id="getList" resultMap="catboard">
+		select * from cat
+	</select>  -->
+	
+	
+	<insert id="DogInsert" parameterType="com.my.pet.board.vo.DogVo">
+		insert into dogtable values(dog_seq.NEXTVAL,#{p_user},#{d_title},
+		#{d_name},#{d_content},SYSDATE,#{d_pic},#{d_picsize})
+	</insert>	
+
+	<select id="getDogList" resultMap="dogboard">
+		select * from dogtable ORDER by d_num
+	</select> 
+	
+	<select id="getDogInfo" parameterType="String"
+		resultMap="dogboard">
+		select * from dogtable where d_name=#{d_name}
+	</select> 
+	
+	<select id="getInfo" parameterType="int"
+		resultMap="dogboard">
+		select * from dogtable where d_num=#{d_num}
+	</select> 
+	
+	<select id="getSearch" resultMap="dogboard">
+		select * from dogtable where d_title like #{title}
+	</select>
+	
+		<!-- where는 마지막에 나와야 한다 예를 들어 조건문 준다고 가운데에 where .. 등 이 끼어 있으면 거기서 끝이다 
+			뒤에 어느조건일 때  .... 어떤게 온다고 하더라고 끝난 문장이라 에러가 발생한다!!!!! -->
+	<update id="getDogUpdate" parameterType="com.my.pet.board.vo.DogVo">
+				update dogtable set d_title=#{d_title}, d_name=#{d_name}, 
+				d_content=#{d_content} 
+		<where>
+			<if test="d_pic != null">
+				, d_pic=#{d_pic}, d_picsize=#{d_picsize} 
+			</if>
+		</where>
+		where d_num=#{d_num}
+	</update>
+	<delete id="getDogDelete">
+		delete from dogtable where d_num=#{d_num}
+	</delete>
+	
+	<select id="getLikeCount" resultType="int" parameterType="int">
+		select count(lt_like) from liketable where d_num=#{d_num}
+	</select>
+		<!-- NVL 이거는 사용한 이유: 그냥 쓰면 NULL을 반환하는데..  NVL사용하면 높은 수가 lt_like반환 없으면 0을 반환!!   -->
+	<select id="getLikeCheck" resultType="int" parameterType="com.my.pet.board.vo.LiketoVo">
+		select NVL(MAX(lt_like), 0) as lt_like from liketable where d_num=#{d_num} and p_user=#{p_user}
+	</select>
+	
+	<insert id="getLikeAdd" parameterType="com.my.pet.board.vo.LiketoVo">
+		insert into liketable values(#{c_num}, #{d_num}, #{p_user}, 1)
+	</insert>
+	<!--  구현 해야함!!!!!! -->
+	<delete id="getLikeDelete" parameterType="com.my.pet.board.vo.LiketoVo">
+		delete from liketable where d_num=#{d_num} and p_user=#{p_user}
+	</delete>
+	
+	
+	
+	<!-- 고양이 -->
+	<select id="getCatList" resultMap="catboard">
+		select * from cattable ORDER by c_num
+	</select>
+	
+	<insert id="CatInsert" parameterType="com.my.pet.board.vo.CatVo">
+		insert into cattable values(cat_seq.NEXTVAL,#{p_user},#{c_title},
+		#{c_name},#{c_content},SYSDATE,#{c_pic},#{c_picsize})
+	</insert>	
+	
+	<select id="getCatInfo" parameterType="int" resultMap="catboard">
+		select * from cattable where c_num=#{c_num}
+	</select>
+	
+	<select id="getCatSearch" resultMap="catboard">
+		select * from cattable where c_title like #{title}
+	</select>
+	
+	<!-- 좋아요 기능 -->
+	<select id="CatLikeCount" parameterType="int" resultType="int">
+		select count(lt_like) from liketable where c_num=#{c_num}
+	</select>
+	
+	<select id="getCL_Check" resultType="int" parameterType="com.my.pet.board.vo.LiketoVo">
+		select NVL(MAX(lt_like), 0) as lt_like from liketable where c_num=#{c_num} and p_user=#{p_user}
+	</select>
+	
+	<insert id="getCatLikeAdd" parameterType="com.my.pet.board.vo.LiketoVo">
+		insert into liketable values(#{c_num}, #{d_num}, #{p_user}, 1)
+	</insert>
+	
+	<delete id="getCatLikeDelete" parameterType="com.my.pet.board.vo.LiketoVo">
+		delete from liketable where c_num=#{c_num} and p_user=#{p_user}
+	</delete>
+	
+	<!-- Training  -->
+	<select id="trainingList" resultMap="traingboard">
+		SELECT * FROM training ORDER BY t_num DESC
+	</select>
+	
+	<insert id="getTInsert" parameterType="com.my.pet.board.vo.TrainingVo">
+		insert into training (t_num, p_user, p_nick, t_title, t_content, t_path, t_date) values(
+			training_seq.NEXTVAL, 
+			#{p_user},
+			#{p_nick}, 
+			#{t_title}, 
+			#{t_content}, 
+			#{t_path},
+			SYSDATE)
+	</insert>
+	<select id="getTView" resultMap="traingboard" parameterType="int">
+		SELECT * FROM training WHERE t_num=#{t_num}
+	</select>
+	
+	<update id="trainingUpdate" parameterType="com.my.pet.board.vo.TrainingVo">
+		update training set t_title=#{t_title}, t_content=#{t_content}, 
+				t_path=#{t_path} where t_num=#{t_num}
+	</update>
+	
+	<delete id="trainingDelete" parameterType="int">
+		DELETE FROM training where t_num=#{t_num}
+	</delete>
+	
+	<select id="getTrainSearch" resultMap="traingboard">
+		select * from training where t_title like #{title}
+	</select>
+	
+	<!-- 방문 예약 -->
+	<insert id="setComIn" parameterType="com.my.pet.board.vo.ComVo">
+		insert into comtable values(
+			com_seq.NEXTVAL,
+			#{p_user},
+			#{p_nick},
+			#{com_title},
+			#{com_content},
+			#{p_phone}
+		)
+	</insert>
+	
+	<select id="getComList" resultMap="comboard">
+		SELECT * FROM comtable
+	</select>
+	
+	<select id="getComSearch" resultMap="comboard" >
+		select * from comtable where com_title like #{title}
+	</select>
+	
+	<select id="getComView" parameterType="int" resultMap="comboard">
+		select * from comtable where com_num=#{com_num}
+	</select>
+	
+	<update id="comUpdate" parameterType="com.my.pet.board.vo.ComVo">
+		update comtable set com_title=#{com_title}, com_content=#{com_content} 
+				 where com_num=#{com_num}
+	</update>
+	
+	<delete id="comDelete" parameterType="int">
+		DELETE from comtable where com_num=#{com_num} 
+	</delete>
+</mapper>
